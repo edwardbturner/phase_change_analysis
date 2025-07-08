@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# PyTorch
+*.pt
+*.pth
+*.pkl
+checkpoint_*
+
+# Results and logs
+results/
+logs/
+runs/
+wandb/
+*.log
+*.png
+*.pdf
+*.jpg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Large data files
+data/
+datasets/
+*.h5
+*.hdf5
+*.npy
+*.npz
+
+# Specific to project
+induction_run_*/
+grokking_eigen_*/
+cleanup_metrics_*
+gradnorm_*
+*.png
+!docs/*.png
