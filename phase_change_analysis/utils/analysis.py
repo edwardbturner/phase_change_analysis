@@ -1,6 +1,7 @@
-import torch
+from typing import Dict, List, Optional
+
 import numpy as np
-from typing import Dict, List, Tuple, Optional
+import torch
 
 
 def compute_gradient_norm(model: torch.nn.Module) -> float:
@@ -23,20 +24,20 @@ def compute_weight_norm(model: torch.nn.Module) -> float:
 def compute_eigenvalues(matrix: torch.Tensor, k: Optional[int] = None) -> torch.Tensor:
     """
     Compute eigenvalues of a matrix.
-    
+
     Args:
         matrix: Input matrix
         k: Number of top eigenvalues to return (None for all)
-    
+
     Returns:
         Eigenvalues in descending order
     """
     eigenvalues = torch.linalg.eigvalsh(matrix)
     eigenvalues = torch.sort(eigenvalues, descending=True)[0]
-    
+
     if k is not None:
         eigenvalues = eigenvalues[:k]
-    
+
     return eigenvalues
 
 
@@ -45,71 +46,69 @@ def analyze_weight_matrix(W: torch.Tensor) -> Dict[str, float]:
     with torch.no_grad():
         # Compute singular values
         U, S, V = torch.svd(W)
-        
+
         # Compute condition number
-        condition_number = S[0] / S[-1] if S[-1] > 1e-10 else float('inf')
-        
+        condition_number = S[0] / S[-1] if S[-1] > 1e-10 else float("inf")
+
         # Compute effective rank (number of singular values > threshold)
         threshold = 1e-3 * S[0]
         effective_rank = (S > threshold).sum().item()
-        
+
         # Compute Frobenius norm
-        frobenius_norm = torch.norm(W, 'fro').item()
-        
+        frobenius_norm = torch.norm(W, "fro").item()
+
         # Compute spectral norm (largest singular value)
         spectral_norm = S[0].item()
-        
+
     return {
-        'condition_number': condition_number,
-        'effective_rank': effective_rank,
-        'frobenius_norm': frobenius_norm,
-        'spectral_norm': spectral_norm,
-        'mean_singular_value': S.mean().item(),
-        'std_singular_value': S.std().item()
+        "condition_number": float(condition_number),
+        "effective_rank": float(effective_rank),
+        "frobenius_norm": frobenius_norm,
+        "spectral_norm": spectral_norm,
+        "mean_singular_value": S.mean().item(),
+        "std_singular_value": S.std().item(),
     }
 
 
 def detect_phase_transition(
-    metrics: Dict[str, List[float]], 
-    window_size: int = 100,
-    threshold: float = 2.0
+    metrics: Dict[str, List[float]], window_size: int = 100, threshold: float = 2.0
 ) -> Optional[int]:
     """
     Detect phase transition point based on rate of change in metrics.
-    
+
     Args:
         metrics: Dictionary of metric histories
         window_size: Size of sliding window for computing derivatives
         threshold: Threshold for detecting significant changes
-    
+
     Returns:
         Step index of detected phase transition, or None
     """
     # Use test accuracy as primary indicator
-    if 'test_acc' not in metrics:
+    if "test_acc" not in metrics:
         return None
-    
-    test_acc = np.array(metrics['test_acc'])
-    
+
+    test_acc = np.array(metrics["test_acc"])
+
     if len(test_acc) < 2 * window_size:
         return None
-    
+
     # Compute rolling gradient
     gradients = []
     for i in range(window_size, len(test_acc) - window_size):
-        left_mean = np.mean(test_acc[i-window_size:i])
-        right_mean = np.mean(test_acc[i:i+window_size])
+        left_mean = np.mean(test_acc[i - window_size : i])
+        right_mean = np.mean(test_acc[i : i + window_size])
         gradient = (right_mean - left_mean) / window_size
         gradients.append(gradient)
-    
+
     gradients = np.array(gradients)
-    
+
     # Find peak gradient
     if len(gradients) > 0:
         peak_idx = np.argmax(gradients)
         if gradients[peak_idx] > threshold / 1000:  # Normalize threshold
-            return peak_idx + window_size
-    
+            return int(peak_idx + window_size)
+
     return None
 
 

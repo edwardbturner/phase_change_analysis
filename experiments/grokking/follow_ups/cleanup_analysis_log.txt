@@ -1,21 +1,0 @@
-Running comprehensive grokking analysis (50k steps)...
-Tracking: cos(grad,H@grad), weight norms, Gini coefficient, sparsity
-Train data size: 2822, Test data size: 6587
-
-Training:   0%|          | 0/50000 [00:00<?, ?it/s]Traceback (most recent call last):
-  File "/workspace/grokking/analyze_cleanup_phase.py", line 386, in <module>
-    main()
-  File "/workspace/grokking/analyze_cleanup_phase.py", line 182, in main
-    restricted_loss = compute_restricted_loss(
-  File "/workspace/grokking/analyze_cleanup_phase.py", line 86, in compute_restricted_loss
-    losses = criterion(outputs, labels.unsqueeze(0).expand(outputs.shape[0], -1).T).mean(dim=1)
-  File "/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-  File "/usr/local/lib/python3.10/dist-packages/torch/nn/modules/module.py", line 1527, in _call_impl
-    return forward_call(*args, **kwargs)
-  File "/usr/local/lib/python3.10/dist-packages/torch/nn/modules/loss.py", line 1179, in forward
-    return F.cross_entropy(input, target, weight=self.weight,
-  File "/usr/local/lib/python3.10/dist-packages/torch/nn/functional.py", line 3053, in cross_entropy
-    return torch._C._nn.cross_entropy_loss(input, target, weight, _Reduction.get_enum(reduction), ignore_index, label_smoothing)
-RuntimeError: 0D or 1D target tensor expected, multi-target not supported
-Training:   0%|          | 0/50000 [00:00<?, ?it/s]

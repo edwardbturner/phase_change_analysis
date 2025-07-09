@@ -45,6 +45,7 @@ tmp/
 temp/
 *.tmp
 *.bak
+.mypy_cache/
 
 # Large data files
 data/

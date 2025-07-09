@@ -1,5 +1,5 @@
-import torch
 import numpy as np
+import torch
 
 
 def generate_modular_addition_data(p, train_frac=0.3, seed=42):
